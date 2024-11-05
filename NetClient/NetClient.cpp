@@ -2,10 +2,14 @@
 //
 
 #include <iostream>
+#include "TcpClient.h"
 
 int main()
 {
     std::cout << "Hello World!\n";
+    TcpClient* client = new TcpClient;
+
+    delete client;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

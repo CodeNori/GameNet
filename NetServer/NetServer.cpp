@@ -2,10 +2,16 @@
 //
 
 #include <iostream>
+#include "TcpServer.h"
+
 
 int main()
 {
     std::cout << "Hello World!\n";
+    TcpServer* srv = new TcpServer;
+
+
+    delete srv;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

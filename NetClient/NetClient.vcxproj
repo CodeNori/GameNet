@@ -128,6 +128,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="NetClient.cpp" />
+    <ClCompile Include="TcpClient.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TcpClient.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
