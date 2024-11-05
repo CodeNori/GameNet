@@ -60,7 +60,7 @@ bool TcpServer::CreateListenSocket()
     FD_ZERO(&mReadSet);
     FD_SET(listen_socket, &mReadSet);
 
-    printf("CreateListenSocket 성공\n");
+    printf("CreateListenSocket 성공 (%d)\n", listen_socket );
     return true;
 }
 
@@ -90,7 +90,7 @@ bool TcpServer::AcceptSession()
     char ipstr[32] = { 0, };
     inet_ntop(AF_INET, &clientaddr.sin_addr, ipstr, sizeof(ipstr));
 
-    printf("\n 클라이언트 접속(%d): IP 주소=%s, 포트 번호=%d\n",
+    printf("\nSession 접속(%d): IP=%s, Port=%d\n",
         client_sock, ipstr, ntohs(clientaddr.sin_port));
 
 
@@ -123,7 +123,6 @@ void TcpServer::Update()
         }
     }
     */
-
 
     int fd_num = select(0, &rset, nullptr, nullptr, &timeout);
 
@@ -160,8 +159,9 @@ void TcpServer::CloseSession(Session* ss)
 {
     if (ss->sock != INVALID_SOCKET)
     {
-        printf("세션 종료 : %d\n", ss->sock);
+        printf("Session 종료 : %d\n", ss->sock);
         FD_CLR(ss->sock, &mReadSet);
+
         closesocket(ss->sock);
         ss->sock = INVALID_SOCKET;
     }
