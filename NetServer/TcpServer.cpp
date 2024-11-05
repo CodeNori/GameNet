@@ -107,24 +107,32 @@ bool TcpServer::AcceptSession()
 
 void TcpServer::Update()
 {
-    FD_SET rset = mReadSet;
+    FD_SET rset= mReadSet;
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = 0;
 
+    /*
+    FD_ZERO(&rset);
+    FD_SET(listen_socket, &rset);
+    for (auto& ss : mSessions)
+    {
+        if (ss && ss->sock != INVALID_SOCKET)
+        {
+            FD_SET(ss->sock, &rset);
+        }
+    }
+    */
+
+
     int fd_num = select(0, &rset, nullptr, nullptr, &timeout);
 
     if (fd_num > 0) {
-        // connet 처리해주기
-        if (FD_ISSET(listen_socket, &rset))
-        {
-            AcceptSession();
-        }
 
         // 데이터 온놈 recv하기
         for (auto& ss : mSessions)
         {
-            if (ss->sock != INVALID_SOCKET and FD_ISSET(ss->sock, &rset))
+            if (ss && FD_ISSET(ss->sock, &rset))
             {
                 bool r = ss->RecvData();
                 if (r == false) { CloseSession(ss); }
@@ -134,10 +142,16 @@ void TcpServer::Update()
         // 네트워크 죽은놈 제거
         for (auto& ss : mSessions)
         {
-            if (ss->sock == INVALID_SOCKET) {
+            if (ss && ss->sock == INVALID_SOCKET) {
                 delete ss;
                 ss = nullptr;
             }
+        }
+
+        // connet 처리해주기
+        if (FD_ISSET(listen_socket, &rset))
+        {
+            AcceptSession();
         }
     }
 }
@@ -147,9 +161,9 @@ void TcpServer::CloseSession(Session* ss)
     if (ss->sock != INVALID_SOCKET)
     {
         printf("세션 종료 : %d\n", ss->sock);
+        FD_CLR(ss->sock, &mReadSet);
         closesocket(ss->sock);
         ss->sock = INVALID_SOCKET;
-        FD_CLR(ss->sock, &mReadSet);
     }
 }
 
@@ -165,7 +179,6 @@ bool TcpServer::Session::RecvData()
     }
     else
     {
-
         return false;
     }
     
