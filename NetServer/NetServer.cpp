@@ -3,13 +3,20 @@
 
 #include <iostream>
 #include "TcpServer.h"
-
+#include <winsock2.h>
 
 int main()
 {
     std::cout << "Hello World!\n";
-    TcpServer* srv = new TcpServer;
+    TcpServer* srv = new TcpServer(20202);
+    int n = 0x12345678;
+    int i = htonl(n);
 
+    bool loop = true;
+    while (loop) {
+        srv->Update();
+        Sleep(1);
+    }
 
     delete srv;
 }

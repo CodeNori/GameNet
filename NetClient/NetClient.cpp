@@ -7,7 +7,10 @@
 int main()
 {
     std::cout << "Hello World!\n";
-    TcpClient* client = new TcpClient;
+    TcpClient* client = new TcpClient("127.0.0.1", 20202);
+
+    client->SandSample();
+    Sleep(1000);
 
     delete client;
 }

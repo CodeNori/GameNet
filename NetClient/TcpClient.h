@@ -4,7 +4,15 @@
 class TcpClient
 {
 public:
-	TcpClient();
+	TcpClient(const char* ip, unsigned short port);
 	~TcpClient();
+
+	void SandSample();
+
+private:
+	bool CreateClientSocket(const char* ip, unsigned short port);
+
+	SOCKET mSocket;
+
 };
 
