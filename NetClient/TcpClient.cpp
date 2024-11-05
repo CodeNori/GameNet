@@ -35,13 +35,43 @@ TcpClient::~TcpClient()
 	Close_TCP();
 }
 
-void TcpClient::SandSample()
+bool TcpClient::SandSample()
 {
 	char buf[1024];
-	strcpy_s(buf, "1234567890");
-	int len = strlen(buf);
+	sprintf_s(buf, "%d %d ABCD", mPort, mSocket );
+	int len = strlen(buf)+1;
 	int r = send(mSocket, buf, len, 0);
+	if (r == SOCKET_ERROR) return false;
+
+	printf("Send... \n");
+	return true;
 }
+
+bool TcpClient::RecvData()
+{
+	char buf[1024];
+	int r = recv(mSocket, buf, 1024, 0);
+	if(r>0) {
+		buf[r] = 0;
+		printf("    recv: %s\n", buf);
+		return true;
+	}
+
+	return false;
+}
+
+bool TcpClient::Select(timeval timeout)
+{
+    FD_SET rset;
+
+    FD_ZERO(&rset);
+    FD_SET(mSocket, &rset);
+
+    int fd_num = select(0, &rset, nullptr, nullptr, &timeout);
+
+	return fd_num > 0;
+}
+
 
 bool TcpClient::CreateClientSocket(const char* ip, unsigned short port)
 {
@@ -54,10 +84,16 @@ bool TcpClient::CreateClientSocket(const char* ip, unsigned short port)
 	inet_pton(AF_INET, ip, &serveraddr.sin_addr);
 	serveraddr.sin_port = htons(port);
 
-	//AF_INET, &clientaddr.sin_addr, ipstr, sizeof(ipstr)
+    //u_long on = 1;
+    //int r = ioctlsocket(mSocket, FIONBIO, &on);
 
 	int r = connect(mSocket, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (r == SOCKET_ERROR) { return false; }
+
+	SOCKADDR_IN my_addr;
+	int addr_len   = sizeof(my_addr);
+	getsockname(mSocket, (sockaddr*)&my_addr, &addr_len );
+	mPort = ntohs(my_addr.sin_port);
 
 	printf("Connect ¼º°ø\n");
 	return true;

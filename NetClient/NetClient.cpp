@@ -9,8 +9,35 @@ int main()
     std::cout << "Hello World!\n";
     TcpClient* client = new TcpClient("127.0.0.1", 20202);
 
-    client->SandSample();
-    Sleep(1000);
+    int loop = 1000;
+    while(loop-- > 0) {
+        if(!client->SandSample())
+            break;
+
+        timeval timeout = {2,0};
+        if(client->Select(timeout)) {
+            if(!client->RecvData())
+                break;
+        }
+        if(client->Select(timeout)) {
+            if(!client->RecvData())
+                break;
+        }
+        if(client->Select(timeout)) {
+            if(!client->RecvData())
+                break;
+        }
+        if(client->Select(timeout)) {
+            if(!client->RecvData())
+                break;
+        }
+        if(client->Select(timeout)) {
+            if(!client->RecvData())
+                break;
+        }
+        Sleep(100);
+
+    }
 
     delete client;
 }

@@ -60,7 +60,7 @@ bool TcpServer::CreateListenSocket()
     FD_ZERO(&mReadSet);
     FD_SET(listen_socket, &mReadSet);
 
-    printf("CreateListenSocket 성공 (%d)\n", listen_socket );
+    printf("Listen 성공 (%d)\n", listen_socket );
     return true;
 }
 
@@ -105,6 +105,31 @@ bool TcpServer::AcceptSession()
     return true;
 }
 
+bool TcpServer::RecvSession(Session* ss)
+{
+    int r = recv(ss->sock, mBuf, 1024, 0);
+
+    if (r<=0) return false;
+
+    mBuf[r] = 0;
+    mBufLen = r;
+    printf("RECV(%d) : %s\n",ss->sock, mBuf);
+        
+    return true;
+}
+
+void TcpServer::SendToAll(char* buf, int len)
+{
+    for (auto& ss : mSessions)
+    {
+        if (ss && ss->sock != INVALID_SOCKET)
+        {
+            int r = send(ss->sock, buf, len, 0);
+            printf("    send to (%d)..\n", ss->sock);
+        }
+    }
+}
+
 void TcpServer::Update()
 {
     FD_SET rset= mReadSet;
@@ -133,8 +158,12 @@ void TcpServer::Update()
         {
             if (ss && FD_ISSET(ss->sock, &rset))
             {
-                bool r = ss->RecvData();
-                if (r == false) { CloseSession(ss); }
+                bool r = RecvSession(ss);
+                if (r) {
+                    SendToAll(mBuf, mBufLen);
+                } else { 
+                    CloseSession(ss); 
+                }
             }
         }
 
@@ -165,21 +194,4 @@ void TcpServer::CloseSession(Session* ss)
         closesocket(ss->sock);
         ss->sock = INVALID_SOCKET;
     }
-}
-
-bool TcpServer::Session::RecvData()
-{
-    char buf[1024];
-    int r = recv(sock, buf, 1024, 0);
-
-    if (r > 0) {
-        buf[r] = 0;
-        printf("받은 데이터 : %s\n", buf);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-    
 }
