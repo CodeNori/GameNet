@@ -60,7 +60,7 @@ bool TcpServer::CreateListenSocket()
     FD_ZERO(&mReadSet);
     FD_SET(listen_socket, &mReadSet);
 
-    printf("Listen 己傍 (%d)\n", listen_socket );
+    printf("Listen 己傍 (%%I64d)\n", listen_socket );
     return true;
 }
 
@@ -90,7 +90,7 @@ bool TcpServer::AcceptSession()
     char ipstr[32] = { 0, };
     inet_ntop(AF_INET, &clientaddr.sin_addr, ipstr, sizeof(ipstr));
 
-    printf("\nSession 立加(%d): IP=%s, Port=%d\n",
+    printf("\nSession 立加(%I64d): IP=%s, Port=%d\n",
         client_sock, ipstr, ntohs(clientaddr.sin_port));
 
 
@@ -107,13 +107,13 @@ bool TcpServer::AcceptSession()
 
 bool TcpServer::RecvSession(Session* ss)
 {
-    int r = recv(ss->sock, mBuf, 1024, 0);
+    int r = recv(ss->sock, mBuf, 4096, 0);
 
     if (r<=0) return false;
 
     mBuf[r] = 0;
     mBufLen = r;
-    printf("RECV(%d) : %s\n",ss->sock, mBuf);
+    printf("RECV(%I64d) : %s\n",ss->sock, mBuf);
         
     return true;
 }
@@ -125,7 +125,7 @@ void TcpServer::SendToAll(char* buf, int len)
         if (ss && ss->sock != INVALID_SOCKET)
         {
             int r = send(ss->sock, buf, len, 0);
-            printf("    send to (%d)..\n", ss->sock);
+            printf("    send to (%I64d)..\n", ss->sock);
         }
     }
 }
@@ -187,8 +187,8 @@ void TcpServer::Update()
 void TcpServer::CloseSession(Session* ss)
 {
     if (ss->sock != INVALID_SOCKET)
-    {
-        printf("Session 辆丰 : %d\n", ss->sock);
+    {        
+        printf("Session 辆丰 : %I64d\n", ss->sock);
         FD_CLR(ss->sock, &mReadSet);
 
         closesocket(ss->sock);

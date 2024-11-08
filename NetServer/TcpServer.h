@@ -29,8 +29,9 @@ private:
 	FD_SET mReadSet;
 	std::vector<Session*> mSessions;
 
-	char mBuf[1024];
 	int mBufLen;
+	char mBuf[4096];
+
 
 };
 
