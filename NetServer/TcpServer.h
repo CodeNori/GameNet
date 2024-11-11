@@ -22,7 +22,7 @@ public:
 
 private:
 	bool CreateListenSocket();
-	void addSession(Session* client);
+	int addSession(Session* client);
 
 	unsigned short mPort;
 	SOCKET listen_socket;

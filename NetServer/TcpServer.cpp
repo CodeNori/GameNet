@@ -64,16 +64,22 @@ bool TcpServer::CreateListenSocket()
     return true;
 }
 
-void TcpServer::addSession(Session* client)
+int TcpServer::addSession(Session* client)
 {
-    for (auto& ss : mSessions) {
+    int idx = 0;
+    for(int i=0; i<mSessions.size(); ++i)
+    {
+        auto& ss = mSessions[i];
         if (nullptr == ss) {
             ss = client;
-            return;
+            idx = i;
+            return i;
         }
     }
 
+    idx = mSessions.size();
     mSessions.push_back(client);
+    return idx;
 }
 
 bool TcpServer::AcceptSession()
@@ -98,7 +104,9 @@ bool TcpServer::AcceptSession()
     ss->sock = client_sock;
     ss->clientAddr = clientaddr;
 
-    addSession(ss);
+    int idx = addSession(ss);
+
+    int r = send(ss->sock, (const char*) & idx, 4, 0);
 
     FD_SET(client_sock, &mReadSet);
 
