@@ -121,7 +121,7 @@ bool TcpServer::RecvSession(Session* ss)
 
     mBuf[r] = 0;
     mBufLen = r;
-    printf("RECV(%I64d) : %s\n",ss->sock, mBuf);
+    printf("RECV(%I64d) :%d: %s\n",ss->sock, r, mBuf);
         
     return true;
 }

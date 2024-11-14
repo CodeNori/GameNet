@@ -21,10 +21,19 @@
     <ClCompile Include="TcpClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Receive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TcpClient.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Receive.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="prePackets.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

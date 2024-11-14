@@ -3,21 +3,10 @@
 
 #include <iostream>
 #include "TcpClient.h"
-#include "prePackets.h"
 
 int main()
 {
     std::cout << "Hello World!\n";
- 
-    std::cout << sizeof(PK_ID_SIZE) << std::endl;
-
-    std::cout << "end";
-
-    return 0;
-    
-    
-    
-
     TcpClient* client = new TcpClient("127.0.0.1", 20202);
 
     int loop = 1000;
